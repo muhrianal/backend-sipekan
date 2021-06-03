@@ -173,6 +173,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://192.168.43.145:8080",
     "http://192.168.43.145:8081",
     "https://sipekan.netlify.app",
+    "https://sipekan.herokuapp.com/",
 ]
 
 # Activate Django-Heroku.

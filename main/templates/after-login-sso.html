@@ -10,7 +10,7 @@
         
         {% endif %}
 
-        <iframe src="http://localhost:8081/login" hidden id="fe-domain"></iframe>
+        <iframe src="https://sipekan.herokuapp.com/login" hidden id="fe-domain"></iframe>
 
 
 
@@ -46,7 +46,7 @@
                     'role' : role,
                     'name' : name,
                 }), 
-                'http://localhost:8081/');
+                'https://sipekan.herokuapp.com/');
                 window.location.href = "{{ next_page }}";
             },
         3000);
@@ -59,7 +59,7 @@
                     'id_user' : id_user,
                     'role' : role,
                     'name' : name,
-                }), 'http://localhost:8081/');
+                }), 'https://sipekan.herokuapp.com/');
                 window.location.href = "{{ next_page }}";
             }, false
         );

@@ -21,7 +21,7 @@ def login_with_sso(request, sso_profile):
             'id_user': user.pk,
             'role' : profile.role,
             'name' : profile.nama,
-            'next_page': 'http://localhost:8081/',
+            'next_page': 'https://sipekan.herokuapp.com/',
             'cors_origin_whitelist': settings.CORS_ALLOWED_ORIGINS,
         }
 
