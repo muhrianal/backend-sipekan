@@ -11,7 +11,7 @@ class Ruangan(models.Model):
       (4, 'Selasar'),
     )
 
-    jenis_ruang = models.PositiveSmallIntegerField(choices=JENIS_RUANG_CHOICES)
+    jenis_ruang = models.PositiveSmallIntegerField(choices=JENIS_RUANG_CHOICES, default=-1)
     nama = models.CharField(max_length=255)
     kapasitas = models.IntegerField()
     lokasi = models.CharField(max_length=255)
@@ -38,7 +38,7 @@ class PeminjamanRuangan(models.Model):
 
     )
 
-    jumlah_peserta = models.BigIntegerField()
+    jumlah_peserta = models.BigIntegerField(default=0)
 
     STATUS_CHOICES = (
       (1, 'Menunggu Persetujuan'),

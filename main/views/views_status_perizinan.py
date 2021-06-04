@@ -23,7 +23,7 @@ from ..models.izin_kegiatan import IzinKegiatan
 
 from ..serializers.peminjaman_ruangan_serializer import PeminjamanRuanganSerializer, RuanganSerializer
 
-from..serializers.izin_kegiatan_serializer import IzinKegiatanSerializer, DetailKegiatanSerializer
+from..serializers.izin_kegiatan_serializer import IzinKegiatanSerializer, DetailKegiatanSerializer, IzinKegiatanSerializerDetailed
 from django.http.response import JsonResponse
 
 @api_view(['GET'])
@@ -40,6 +40,8 @@ def list_perizinan(request):
     }
     return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', 'PUT'])
+@permission_classes([permissions.AllowAny,])
 def detail_perizinan(request,pk):
     try:
         perizinan = IzinKegiatan.objects.get(pk=pk)
@@ -52,5 +54,25 @@ def detail_perizinan(request,pk):
     data = {
             'message' : 'invalid API call'
         }
+    # elif request.method == 'PUT':
+    #         perizinan_data = JSONParser().parse(request)
+    #         perizinan_serializer = IzinKegiatanSerializer(perizinan, data=perizinan_data)
+    #         if perizinan_serializer.is_valid():
+    #             perizinan_serializer.save()
+    #             return JsonResponse(perizinan_serializer.data)
+    #         return JsonResponse(perizinan_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny,])
+def list_perizinan_detailed(request):
+    if request.method == 'GET':
+        list_izin_kegiatan = IzinKegiatan.objects.all()
+        izin_kegiatan_serialized = IzinKegiatanSerializerDetailed(list_izin_kegiatan, many=True)
+        return JsonResponse(izin_kegiatan_serialized.data, safe=False)
+
+    #case for else
+    data = {
+        'message' : 'invalid API call'
+    }
+    return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
