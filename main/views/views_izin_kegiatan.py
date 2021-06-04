@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 
-from ..permissions import AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM
+from ..permissions import AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM, AllowOnlyMahasiswa
 
 from ..models.izin_kegiatan import DetailKegiatan, IzinKegiatan
 
@@ -79,7 +79,7 @@ def list_izin_kegiatan(request):
     return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])  
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM|AllowOnlyMahasiswa])  
 def detail_izin_kegiatan(request,pk):
     try:
         izin_kegiatan = IzinKegiatan.objects.get(pk=pk)
