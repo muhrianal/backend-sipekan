@@ -39,10 +39,11 @@ def update_izin_kegiatan_by_id_perizinan(request, id_perizinan):
     if request.method == 'PUT':
         izin_data = JSONParser().parse(request) 
         try:
-            izin_kegiatan.status_perizinan_kegiatan = izin_data["izin_kegiatan"]["status_perizinan_kegiatan"]
-            if izin_data["izin_kegiatan"]["detail_kegiatan"]["alasan_penolakan"] is not None:
-                izin_kegiatan.detail_kegiatan.alasan_penolakan = izin_data["izin_kegiatan"]["detail_kegiatan"]["alasan_penolakan"] 
-            izin_kegiatan.detail_kegiatan.updated_at = izin_data["izin_kegiatan"]["detail_kegiatan"]["updated_at"]
+            izin_kegiatan.status_perizinan_kegiatan = izin_data["status_perizinan_kegiatan"]
+            izin_kegiatan.detail_kegiatan.updated_at = izin_data["detail_kegiatan"]["updated_at"]
+            if izin_data["detail_kegiatan"]["alasan_penolakan"] is not None:
+                izin_kegiatan.detail_kegiatan.alasan_penolakan = izin_data["detail_kegiatan"]["alasan_penolakan"] 
+            izin_kegiatan.detail_kegiatan.save()
             izin_kegiatan.save()
             izin_kegiatan_serialized = IzinKegiatanMahasiswaSerializer1(data=izin_kegiatan)
             if izin_kegiatan_serialized.is_valid():
