@@ -192,7 +192,7 @@ def get_list_souvenir(request):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['POST'])
-@permission_classes([permissions.AllowAny,])
+@permission_classes([AllowOnlyAdminHUMAS])
 def post_souvenir(request):
     if request.method == 'POST':
         souvenir_data = JSONParser().parse(request)
@@ -206,7 +206,7 @@ def post_souvenir(request):
     return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET','PUT', 'DELETE'])
-@permission_classes([permissions.AllowAny,])
+@permission_classes([AllowOnlyAdminHUMAS])
 def detail_souvenir(request,pk):
     try:
         souvenir = Souvenir.objects.get(pk=pk)
@@ -278,7 +278,7 @@ def detail_permintaan_souvenir(request,pk):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED) 
 
 @api_view(['PUT'])
-@permission_classes([permissions.AllowAny,]) 
+@permission_classes([AllowOnlyMahasiswa]) 
 @parser_classes([MultiPartParser, FormParser])
 def put_perizinan_publikasi(request, pk):
     try:

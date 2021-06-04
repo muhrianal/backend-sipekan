@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
-from ..permissions import AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM
+from ..permissions import AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM, AllowOnlyMahasiswa
 from ..models.profile import Profile
 from ..models.peminjaman_ruangan import PeminjamanRuangan, Perulangan
 from ..models.peminjaman_ruangan import Ruangan
@@ -223,7 +223,7 @@ def detail_peminjaman_ruangan(request,pk):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET','PUT'])
-@permission_classes([permissions.AllowAny,])
+@permission_classes([AllowOnlyMahasiswa])
 def perulangan(request,pk):
     try:
         perulangan = Perulangan.objects.get(pk=pk)
