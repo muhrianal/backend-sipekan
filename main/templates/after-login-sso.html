@@ -1,0 +1,68 @@
+<html>
+
+    <body> 
+        {{ cors_origin_whitelist|json_script:'cors-data' }}
+
+
+        {% if next_page %}
+        <h1>Login Sukses!</h1>
+        <h4>Klik di <button id="btn-redirect">sini</button> untuk kembali ke halaman sebelumnya.</h4>
+        
+        {% endif %}
+
+        <iframe src="http://localhost:8081/login" hidden id="fe-domain"></iframe>
+
+
+
+    </body>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script>
+        var token = "{{ token }}";
+        var username = "{{ username }}";
+        var id_user = "{{ id_user }}";
+        var role = "{{ role }}";
+        var name = "{{ name }}";
+        var cors_origin_whitelist = JSON.parse(document.getElementById('cors-data').textContent);
+
+        var btn = document.getElementById('btn-redirect');
+
+        var iFrame = document.getElementById('fe-domain');
+        setTimeout(
+            function(){ 
+                var info = JSON.stringify({
+                    'token' : token,
+                    'username' : username,
+                    'id_user' : id_user,
+                    'role' : role,
+                    'name' : name,
+                })
+                console.log('ini info :'+info)
+                
+                iFrame.contentWindow.postMessage(JSON.stringify({
+                    'token' : token,
+                    'username' : username,
+                    'id_user' : id_user,
+                    'role' : role,
+                    'name' : name,
+                }), 
+                'http://localhost:8081/');
+                window.location.href = "{{ next_page }}";
+            },
+        3000);
+        
+        btn.addEventListener("click",
+            () => {
+                iFrame.contentWindow.postMessage(JSON.stringify({
+                    'token' : token,
+                    'username' : username,
+                    'id_user' : id_user,
+                    'role' : role,
+                    'name' : name,
+                }), 'http://localhost:8081/');
+                window.location.href = "{{ next_page }}";
+            }, false
+        );
+
+    </script>
+</html>
