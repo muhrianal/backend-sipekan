@@ -29,7 +29,7 @@ from django.http.response import JsonResponse
 
 
 @api_view(['PUT',])
-@permission_classes([AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM])
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])
 def update_izin_kegiatan_by_id_perizinan(request, id_perizinan):
     try:
         izin_kegiatan = IzinKegiatan.objects.get(pk=id_perizinan)
@@ -56,7 +56,7 @@ def update_izin_kegiatan_by_id_perizinan(request, id_perizinan):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED) 
 
 @api_view(['POST','GET'])
-@permission_classes([AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM])
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])
 def list_izin_kegiatan(request):
 
     if request.method == 'POST':
@@ -79,7 +79,7 @@ def list_izin_kegiatan(request):
     return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM])  
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])  
 def detail_izin_kegiatan(request,pk):
     try:
         izin_kegiatan = IzinKegiatan.objects.get(pk=pk)
@@ -95,7 +95,7 @@ def detail_izin_kegiatan(request,pk):
     return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET',])
-@permission_classes([AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM])
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])
 def get_list_perizinan_PKM(request):
     if request.method == 'GET':
         list_izin_kegiatan = IzinKegiatan.objects.filter(status_perizinan_kegiatan=1)
@@ -106,7 +106,7 @@ def get_list_perizinan_PKM(request):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET',])
-@permission_classes([AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM])
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])
 def get_list_perizinan_PKM_Verified(request):
     if request.method == 'GET':
         list_izin_kegiatan = IzinKegiatan.objects.filter(status_perizinan_kegiatan=2)
@@ -117,7 +117,7 @@ def get_list_perizinan_PKM_Verified(request):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET',])
-@permission_classes([AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM])
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])
 def get_list_perizinan_PKM_Verified_Simplified(request):
     if request.method == 'GET':
         list_izin_kegiatan = IzinKegiatan.objects.filter(status_perizinan_kegiatan=2)
@@ -128,7 +128,7 @@ def get_list_perizinan_PKM_Verified_Simplified(request):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET',])
-@permission_classes([AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM])
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])
 def get_list_perizinan_PKM_Denied_Simplified(request):
     if request.method == 'GET':
         list_izin_kegiatan = IzinKegiatan.objects.filter(status_perizinan_kegiatan=3)
@@ -139,7 +139,7 @@ def get_list_perizinan_PKM_Denied_Simplified(request):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET',])
-@permission_classes([AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM])
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])
 def get_list_perizinan_PKM_Waiting_Simplified(request):
     if request.method == 'GET':
         list_izin_kegiatan = IzinKegiatan.objects.filter(status_perizinan_kegiatan=1)
@@ -150,7 +150,7 @@ def get_list_perizinan_PKM_Waiting_Simplified(request):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET',])
-@permission_classes([AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM])
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])
 def get_list_perizinan_Humas_Waiting_Simplified(request):
     if request.method == 'GET':
         list_perizinan_publikasi= JenisIzinPublikasi.objects.filter(status_perizinan_publikasi=1)
@@ -163,7 +163,7 @@ def get_list_perizinan_Humas_Waiting_Simplified(request):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET',])
-@permission_classes([AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM])
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])
 def get_list_souvenir_simple(request):
     if request.method == 'GET':
         list_souvenir = Souvenir.objects.all()

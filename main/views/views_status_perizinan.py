@@ -64,7 +64,7 @@ def detail_perizinan(request,pk):
     return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM])
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])
 def list_perizinan_detailed(request):
     if request.method == 'GET':
         list_izin_kegiatan = IzinKegiatan.objects.all()
