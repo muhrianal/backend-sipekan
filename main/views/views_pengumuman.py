@@ -62,6 +62,5 @@ def put_pengumuman(request, id_pengumuman):
         if pengumuman_data_serialized.is_valid():
             pengumuman_data_serialized.save()
             return JsonResponse(pengumuman_data_serialized.data)
-        # print(pengumuman_data_serialized.errors)
         return JsonResponse(pengumuman_data_serialized.errors, status=status.HTTP_400_BAD_REQUEST)
     return JsonResponse({'message': 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
