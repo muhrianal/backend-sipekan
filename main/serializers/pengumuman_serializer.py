@@ -18,7 +18,7 @@ class PengumumanSerializer(serializers.ModelSerializer):
 
         return_data = {
             'nama' : data.get('nama'),
-            'deksripsi' : data.get('deskripsi')
+            'deskripsi' : data.get('deskripsi')
         }
 
         if isinstance(file_pengumuman, str):
