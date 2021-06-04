@@ -89,7 +89,7 @@ def detail_kegiatan(request,pk):
 
 #untuk izin kegiatan dengan file
 @api_view(['GET','PUT'])
-@permission_classes([permissions.AllowAny,]) 
+@permission_classes([AllowOnlyMahasiswa]) 
 def put_izin_kegiatan_header(request, pk):
     try:
         izin_kegiatan = IzinKegiatan.objects.get(pk=pk)
@@ -109,7 +109,7 @@ def put_izin_kegiatan_header(request, pk):
 
 
 @api_view(['PUT'])
-@permission_classes([permissions.AllowAny,]) 
+@permission_classes([AllowOnlyMahasiswa]) 
 @parser_classes([MultiPartParser, FormParser])
 def put_izin_kegiatan_detail(request, pk):
     try:
