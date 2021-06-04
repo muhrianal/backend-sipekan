@@ -5,6 +5,8 @@ from django.http.response import JsonResponse
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from ..permissions import AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM
+
 
 @api_view(['GET', ])
 @permission_classes([permissions.AllowAny,])
@@ -17,7 +19,7 @@ def get_all_pengumuman(request):
 
 
 @api_view(['GET',])
-@permission_classes([permissions.AllowAny,])
+@permission_classes([AllowOnlyAdminFASTUR | AllowOnlyAdminHUMAS | AllowOnlyAdminPKM])
 def get_pengumuman_by_id(request, id_pengumuman):
     try:
         pengumuman = Pengumuman.objects.get(pk=id_pengumuman)
@@ -35,7 +37,7 @@ def get_pengumuman_by_id(request, id_pengumuman):
 
 @api_view(['POST', ])
 @parser_classes([MultiPartParser, ])
-@permission_classes([permissions.AllowAny,])
+@permission_classes([AllowOnlyAdminFASTUR | AllowOnlyAdminHUMAS | AllowOnlyAdminPKM])
 def post_new_pengumuman(request):
     if request.method == 'POST':
         pengumuman_data_serialized = PengumumanSerializer(data=request.data)
@@ -48,7 +50,7 @@ def post_new_pengumuman(request):
 
 @api_view(['PUT', ])
 @parser_classes([MultiPartParser, ])
-@permission_classes([permissions.AllowAny,])
+@permission_classes([AllowOnlyAdminFASTUR | AllowOnlyAdminHUMAS | AllowOnlyAdminPKM])
 def put_pengumuman(request, id_pengumuman):
     try:
         pengumuman = Pengumuman.objects.get(pk=id_pengumuman)
