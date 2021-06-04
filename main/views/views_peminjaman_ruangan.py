@@ -20,7 +20,8 @@ from ..serializers.kalender_serializer import KalenderSerializer
 from ..serializers.peminjaman_ruangan_serializer import PeminjamanRuanganSerializer, RuanganSerializer
 from ..serializers.peminjaman_ruangan_serializer import PeminjamanRuanganMahasiswaSerializer
 from ..serializers.peminjaman_ruangan_serializer import PeminjamanRuanganSerializer, RuanganSerializer, IzinKegiatanFasturSerializer
-
+import datetime
+from .utils_peminjaman_ruangan import is_available
 
 @api_view(['PUT',])
 @permission_classes([permissions.AllowAny,]) #nanti diganti jadi admin fastur dan peminjam
@@ -141,8 +142,14 @@ def detail_ruangan(request,pk):
 def post_peminjaman_ruangan_unit_kerja(request):
     if request.method == 'POST':
         peminjaman_data = JSONParser().parse(request)
+        
         peminjaman_data_serialized = IzinKegiatanUnitKerjaSerializer(data=peminjaman_data)
         if peminjaman_data_serialized.is_valid():
+            if not is_available(peminjaman_data):
+                return JsonResponse({'message' : 'Ruangan tidak tersedia'}, status=status.HTTP_409_CONFLICT)
+
+
+            print('masuk sini')
             peminjaman_data_serialized.save()
             return JsonResponse(peminjaman_data_serialized.data, status=status.HTTP_201_CREATED) 
         return JsonResponse(peminjaman_data_serialized.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -166,7 +173,7 @@ def get_list_perizinan_fastur(request):
 @permission_classes([permissions.AllowAny,]) #nanti diganti jadi mahasiswa
 def post_peminjaman_ruangan_mahasiswa(request,id_izin_kegiatan):
     try: 
-        izin_kegiatan =IzinKegiatan.objects.get(pk=id_izin_kegiatan)
+        izin_kegiatan = IzinKegiatan.objects.get(pk=id_izin_kegiatan)
     except:
         return JsonResponse({'message': 'Izin kegiatan tidak ada'}, status=status.HTTP_404_NOT_FOUND)
     
