@@ -163,7 +163,7 @@ def get_list_perizinan_fastur(request):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['POST'])
-@permission_classes([permissions.AllowAny,]) #nanti diganti jadi mahasiswa
+@permission_classes([AllowOnlyMahasiswa]) #nanti diganti jadi mahasiswa
 def post_peminjaman_ruangan_mahasiswa(request,id_izin_kegiatan):
     try: 
         izin_kegiatan = IzinKegiatan.objects.get(pk=id_izin_kegiatan)
@@ -174,6 +174,8 @@ def post_peminjaman_ruangan_mahasiswa(request,id_izin_kegiatan):
         peminjaman_data = JSONParser().parse(request)
         peminjaman_ruangan_serialized =PeminjamanRuanganMahasiswaSerializer(izin_kegiatan,data=peminjaman_data)
         if peminjaman_ruangan_serialized.is_valid():
+            if not is_available(peminjaman_data):
+                return JsonResponse({'message' : 'Ruangan tidak tersedia'}, status=status.HTTP_409_CONFLICT)
             peminjaman_ruangan_serialized.save()
             return JsonResponse(peminjaman_ruangan_serialized.data)
         return JsonResponse(peminjaman_ruangan_serialized.errors, status=status.HTTP_400_BAD_REQUEST) 

@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 
-from ..permissions import AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM
+from ..permissions import AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM, AllowOnlyMahasiswa
 from ..models.profile import Profile
 
 from django.http.response import JsonResponse
@@ -22,7 +22,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 #untuk izin kegiatan dengan file
 @api_view(['POST'])
-@permission_classes([permissions.AllowAny,]) 
+@permission_classes([AllowOnlyMahasiswa]) 
 def post_izin_kegiatan_header(request):
     if request.method == 'POST': # post header izin kegiatan
         perizinan_data = JSONParser().parse(request)
@@ -36,7 +36,7 @@ def post_izin_kegiatan_header(request):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['POST'])
-@permission_classes([permissions.AllowAny,]) 
+@permission_classes([AllowOnlyMahasiswa]) 
 @parser_classes([MultiPartParser, FormParser])
 def post_izin_kegiatan_detail(request):
     if request.method == 'POST': # post detail izin kegiatan
@@ -64,9 +64,6 @@ def get_put_izin_kegiatan_mahasiswa(pk,request):
             return JsonResponse(perizinan_data_serialized.data,status=status.HTTP_201_CREATED,safe=False)
         return JsonResponse(perizinan_data_serialized.errors, status=status.HTTP_400_BAD_REQUEST)
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    
-    
 
     #case for else
 
