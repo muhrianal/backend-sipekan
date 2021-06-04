@@ -8,7 +8,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
-from ..permissions import AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM, AllowOnlyMahasiswa
+from ..permissions import AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM, AllowOnlyMahasiswa, AllowOnlyUnitKerja
+
 from ..models.profile import Profile
 from ..models.peminjaman_ruangan import PeminjamanRuangan, Perulangan
 from ..models.peminjaman_ruangan import Ruangan
@@ -21,11 +22,13 @@ from ..serializers.peminjaman_ruangan_serializer import PeminjamanRuanganSeriali
 from ..serializers.peminjaman_ruangan_serializer import PeminjamanRuanganMahasiswaSerializer
 from ..serializers.peminjaman_ruangan_serializer import PeminjamanRuanganSerializer, RuanganSerializer, IzinKegiatanFasturSerializer
 import datetime
+from django.utils import timezone
 from .utils_peminjaman_ruangan import is_available
 
 @api_view(['PUT',])
-@permission_classes([permissions.AllowAny,]) #nanti diganti jadi admin fastur dan peminjam
+@permission_classes([AllowOnlyAdminFASTUR | AllowOnlyMahasiswa |  AllowOnlyUnitKerja])
 def update_peminjaman_ruangan_by_id_peminjaman_ruangan(request, id_peminjaman):
+   
     try:
         peminjaman_ruangan = PeminjamanRuangan.objects.get(pk=id_peminjaman)
     except:
@@ -33,16 +36,18 @@ def update_peminjaman_ruangan_by_id_peminjaman_ruangan(request, id_peminjaman):
 
     if request.method == 'PUT':
         
-        peminjaman_data = JSONParser().parse(request) 
-        # print(peminjaman_data['alasan_penolakan'])
-
+        
+        peminjaman_data = JSONParser().parse(request)
+        # print(peminjaman_data)
         try:
             peminjaman_ruangan.status_peminjaman_ruangan = peminjaman_data['status_peminjaman_ruangan']
             if peminjaman_data['alasan_penolakan'] is not None:
                 peminjaman_ruangan.alasan_penolakan = peminjaman_data['alasan_penolakan']
+            peminjaman_ruangan.updated_at = timezone.now()
             peminjaman_ruangan.save()
             return JsonResponse(PeminjamanRuanganUnitKerjaSerializer(peminjaman_ruangan).data, safe=False)
         except:
+            print("masuk sini")
             return JsonResponse({'message': 'Terjadi kesalahan'}, status=status.HTTP_400_BAD_REQUEST)
 
             
@@ -93,10 +98,6 @@ def list_ruangan(request):
         daftar_ruangan = Ruangan.objects.all()
         ruangans_serialized = RuanganSerializer(daftar_ruangan, many= True)
         return JsonResponse(ruangans_serialized.data, safe=False)
-#     data = {
-#             'message' : 'invalid API call'
-#         }
-#     return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'POST':
         ruang_data = JSONParser().parse(request)
@@ -120,10 +121,6 @@ def detail_ruangan(request,pk):
     if request.method == 'GET':
         ruangan_serialized = RuanganSerializer(ruangan)
         return JsonResponse(ruangan_serialized.data, safe=False)
-#     data = {
-#             'message' : 'invalid API call'
-#         }
-#     return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'PUT':
             ruangan_data = JSONParser().parse(request)
             ruangan_serializer = RuanganSerializer(ruangan, data=ruangan_data)
@@ -133,12 +130,12 @@ def detail_ruangan(request,pk):
             return JsonResponse(ruangan_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         ruangan.delete()
-        return JsonResponse({'messagee': 'Ruangan berhasil dihapus'}, status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse({'message': 'Ruangan berhasil dihapus'}, status=status.HTTP_204_NO_CONTENT)
 #         #do something untuk request DELETE, misal hapus izin kegiatan yang sudah ada
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED) 
  
 @api_view(['POST',])
-@permission_classes([permissions.AllowAny,]) #nanti diganti jadi unit kerja
+@permission_classes([AllowOnlyUnitKerja]) #nanti diganti jadi unit kerja
 def post_peminjaman_ruangan_unit_kerja(request):
     if request.method == 'POST':
         peminjaman_data = JSONParser().parse(request)
@@ -147,9 +144,6 @@ def post_peminjaman_ruangan_unit_kerja(request):
         if peminjaman_data_serialized.is_valid():
             if not is_available(peminjaman_data):
                 return JsonResponse({'message' : 'Ruangan tidak tersedia'}, status=status.HTTP_409_CONFLICT)
-
-
-            print('masuk sini')
             peminjaman_data_serialized.save()
             return JsonResponse(peminjaman_data_serialized.data, status=status.HTTP_201_CREATED) 
         return JsonResponse(peminjaman_data_serialized.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -159,7 +153,7 @@ def post_peminjaman_ruangan_unit_kerja(request):
 
 
 @api_view(['GET',])
-@permission_classes([permissions.AllowAny,])
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])
 def get_list_perizinan_fastur(request):
     if request.method == 'GET':
         list_izin_kegiatan = IzinKegiatan.objects.filter(status_perizinan_kegiatan=2)
@@ -170,7 +164,7 @@ def get_list_perizinan_fastur(request):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['POST'])
-@permission_classes([permissions.AllowAny,]) #nanti diganti jadi mahasiswa
+@permission_classes([AllowOnlyMahasiswa]) #nanti diganti jadi mahasiswa
 def post_peminjaman_ruangan_mahasiswa(request,id_izin_kegiatan):
     try: 
         izin_kegiatan = IzinKegiatan.objects.get(pk=id_izin_kegiatan)
@@ -181,6 +175,8 @@ def post_peminjaman_ruangan_mahasiswa(request,id_izin_kegiatan):
         peminjaman_data = JSONParser().parse(request)
         peminjaman_ruangan_serialized =PeminjamanRuanganMahasiswaSerializer(izin_kegiatan,data=peminjaman_data)
         if peminjaman_ruangan_serialized.is_valid():
+            if not is_available(peminjaman_data):
+                return JsonResponse({'message' : 'Ruangan tidak tersedia'}, status=status.HTTP_409_CONFLICT)
             peminjaman_ruangan_serialized.save()
             return JsonResponse(peminjaman_ruangan_serialized.data)
         return JsonResponse(peminjaman_ruangan_serialized.errors, status=status.HTTP_400_BAD_REQUEST) 
