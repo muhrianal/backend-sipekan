@@ -42,3 +42,17 @@ class IzinKegiatanHeaderSerialezer(serializers.ModelSerializer):
     class Meta:
         model= IzinKegiatan
         fields= ('id','nama_kegiatan', 'organisasi', 'user', 'status_perizinan_kegiatan')
+
+class IzinSerializer(serializers.ModelSerializer):
+
+    detail_kegiatan = DetailKegiatanMahasiswaSerializer()
+
+    class Meta:
+        model = IzinKegiatan
+        fields = ('id','nama_kegiatan', 'organisasi', 'user', 'status_perizinan_kegiatan','detail_kegiatan')
+    
+    def update(self, validated_data):
+        detail_kegiatan_data = validated_data.pop('detail_kegiatan')
+        izin_kegiatan = IzinKegiatan.objects.update(**validated_data)
+        DetailKegiatan.objects.update(izin_kegiatan = izin_kegiatan, **detail_kegiatan_data)
+        return izin_kegiatan

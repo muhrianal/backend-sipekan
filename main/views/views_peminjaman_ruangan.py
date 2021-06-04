@@ -10,12 +10,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from ..permissions import AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM
 from ..models.profile import Profile
-from ..models.peminjaman_ruangan import PeminjamanRuangan
+from ..models.peminjaman_ruangan import PeminjamanRuangan, Perulangan
 from ..models.peminjaman_ruangan import Ruangan
 from ..models.izin_kegiatan import IzinKegiatan
 from ..serializers.peminjaman_ruangan_serializer import PeminjamanRuanganUnitKerjaSerializer, IzinKegiatanUnitKerjaSerializer
 from django.http.response import JsonResponse
-from ..serializers.peminjaman_ruangan_serializer import PeminjamanRuanganSerializer
+from ..serializers.peminjaman_ruangan_serializer import PeminjamanRuanganSerializer, PerulanganSerializer
 from ..serializers.kalender_serializer import KalenderSerializer
 from ..serializers.peminjaman_ruangan_serializer import PeminjamanRuanganSerializer, RuanganSerializer
 from ..serializers.peminjaman_ruangan_serializer import PeminjamanRuanganMahasiswaSerializer
@@ -189,6 +189,7 @@ def post_peminjaman_ruangan_mahasiswa(request,id_izin_kegiatan):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
+
 @api_view(['GET',])
 @permission_classes([permissions.AllowAny,])
 def get_peminjaman_ruangan_by_id_izin_kegiatan(request, id_izin_kegiatan):
@@ -198,4 +199,45 @@ def get_peminjaman_ruangan_by_id_izin_kegiatan(request, id_izin_kegiatan):
         return JsonResponse(list_peminjaman_ruangan_serialized.data, safe=False)
     
     #case for else
+    return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['GET','PUT'])
+@permission_classes([permissions.AllowAny,])
+def detail_peminjaman_ruangan(request,pk):
+    try:
+        peminjaman_ruangan = PeminjamanRuangan.objects.get(pk=pk)
+    except PeminjamanRuangan.DoesNotExist:
+        return JsonResponse({'message': 'Peminjaman Ruangan tidak ada'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        peminjaman_ruangan_serialized = PeminjamanRuanganSerializer(peminjaman_ruangan)
+        return JsonResponse(peminjaman_ruangan_serialized.data, safe=False)
+    elif request.method == 'PUT':
+        peminjaman_ruangan_data = JSONParser().parse(request)
+        peminjaman_ruangan_serializer = PeminjamanRuanganSerializer(peminjaman_ruangan, data=peminjaman_ruangan_data)
+        if peminjaman_ruangan_serializer.is_valid():
+            peminjaman_ruangan_serializer.save()
+            return JsonResponse(peminjaman_ruangan_serializer.data)
+        return JsonResponse(peminjaman_ruangan_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['GET','PUT'])
+@permission_classes([permissions.AllowAny,])
+def perulangan(request,pk):
+    try:
+        perulangan = Perulangan.objects.get(pk=pk)
+    except Perulangan.DoesNotExist:
+        return JsonResponse({'message': 'Perulangan tidak ada'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        perulangan_serialized = PerulanganSerializer(perulangan)
+        return JsonResponse(perulangan_serialized.data, safe=False)
+    elif request.method == 'PUT':
+        perulangan_data = JSONParser().parse(request)
+        perulangan_serializer = PerulanganSerializer(perulangan, data=perulangan_data)
+        if perulangan_serializer.is_valid():
+            perulangan_serializer.save()
+            return JsonResponse(perulangan_serializer.data)
+        return JsonResponse(perulangan_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)

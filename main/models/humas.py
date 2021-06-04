@@ -18,17 +18,10 @@ class PermintaanProtokoler(models.Model):
       (2, 'Disetujui'),
       (3, 'Ditolak'),
     )
-    status_permintaan_protokoler = models.PositiveSmallIntegerField(choices=STATUS_CHOICES)
-
+    status_permintaan_protokoler = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1)
 
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
-    STATUS_CHOICES = (
-          (1, 'Menunggu Persetujuan'),
-          (2, 'Disetujui'),
-          (3, 'Ditolak'),
-        )
-    status_permintaan_protokoler = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1)
 
     class Meta:
         app_label = 'main'
@@ -44,24 +37,11 @@ class PerizinanPublikasi(models.Model):
     izin_kegiatan = models.OneToOneField(
         IzinKegiatan,
         related_name = 'perizinan_publikasi',
-        
         on_delete=models.CASCADE
     )
     tanggal_mulai = models.DateField()
     tanggal_akhir = models.DateField()
-
-    jenis_publikasi = models.ManyToManyField(
-        JenisPublikasi
-    )
     
-    STATUS_CHOICES = (
-      (1, 'Menunggu Persetujuan'),
-      (2, 'Disetujui'),
-      (3, 'Ditolak'),
-    )
-
-    status_perizinan_publikasi = models.PositiveSmallIntegerField(choices=STATUS_CHOICES)
-    alasan_penolakan = models.CharField(max_length=500, default=None, blank=True, null=True)
     keterangan = models.CharField(max_length=500, default=None, blank=True, null=True)
     file_materi_kegiatan = models.FileField(upload_to='file_materi_kegiatan', blank=True)
     file_flyer_pengumuman = models.FileField(upload_to='file_flyer_pengumuman',blank=True)
@@ -72,6 +52,26 @@ class PerizinanPublikasi(models.Model):
     class Meta:
         app_label = 'main'
     
+class JenisIzinPublikasi(models.Model):
+    perizinan_publikasi = models.ForeignKey(
+        PerizinanPublikasi,
+        related_name = 'jenis_izin_publikasi',
+        on_delete=models.CASCADE
+    )
+    
+    jenis_publikasi = models.ForeignKey(
+        JenisPublikasi,
+        on_delete = models.CASCADE
+    )
+    
+    STATUS_CHOICES = (
+      (1, 'Menunggu Persetujuan'),
+      (2, 'Disetujui'),
+      (3, 'Ditolak'),
+    )
+
+    status_perizinan_publikasi = models.PositiveSmallIntegerField(choices=STATUS_CHOICES)
+    alasan_penolakan = models.CharField(max_length=500, default=None, blank=True, null=True)
 
 
 class Souvenir(models.Model):
@@ -97,6 +97,9 @@ class Souvenir(models.Model):
     region = models.PositiveSmallIntegerField(choices=REGION_CHOICES)
     
     stok = models.IntegerField()
+    stok_minimum = models.IntegerField(default=1)
+    tanggal_masuk = models.DateField(default=None, blank=True, null=True)
+    keterangan = models.CharField(max_length=500, default=None, blank=True, null=True)
 
     class Meta:
         app_label = 'main'
