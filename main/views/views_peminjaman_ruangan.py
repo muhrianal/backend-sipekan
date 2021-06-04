@@ -159,7 +159,7 @@ def post_peminjaman_ruangan_unit_kerja(request):
 
 
 @api_view(['GET',])
-@permission_classes([permissions.AllowAny,])
+@permission_classes([[AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM]])
 def get_list_perizinan_fastur(request):
     if request.method == 'GET':
         list_izin_kegiatan = IzinKegiatan.objects.filter(status_perizinan_kegiatan=2)
