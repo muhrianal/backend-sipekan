@@ -56,7 +56,7 @@ def update_izin_kegiatan_by_id_perizinan(request, id_perizinan):
     return JsonResponse({'message' : 'invalid API method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED) 
 
 @api_view(['POST','GET'])
-@permission_classes([permissions.AllowAny,])
+@permission_classes([AllowOnlyAdminFASTUR|AllowOnlyAdminHUMAS|AllowOnlyAdminPKM])
 def list_izin_kegiatan(request):
 
     if request.method == 'POST':
