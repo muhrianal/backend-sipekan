@@ -9,7 +9,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from ..permissions import AllowOnlyAdminFASTUR, AllowOnlyAdminHUMAS, AllowOnlyAdminPKM, AllowOnlyMahasiswa, AllowOnlyUnitKerja
-
 from ..models.profile import Profile
 from ..models.peminjaman_ruangan import PeminjamanRuangan, Perulangan
 from ..models.peminjaman_ruangan import Ruangan
